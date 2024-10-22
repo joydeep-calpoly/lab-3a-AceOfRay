@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MovieTicketPriceCalculator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">lab_3_maven</a> &gt; <a href="index.source.html" class="el_package">lab3.part_a</a> &gt; <span class="el_source">MovieTicketPriceCalculator.java</span></div><h1>MovieTicketPriceCalculator.java</h1><pre class="source lang-java linenums">package lab3.part_a;
+
+import java.time.LocalTime;
+import java.util.Objects;
+
+/**
+ * Once configured with the start and end times for matinee pricing and the
+ * relevant age thresholds, instances of this class will compute a movie
+ * ticket price.
+ *
+ * &lt;p&gt;Some of the values are hard-coded for purposes of the lab, but should also
+ * be configurable.
+ */
+public class MovieTicketPriceCalculator {
+  private static final int STANDARD_PRICE_CENTS = 2700;
+  private static final int MATINEE_PRICE_CENTS = 2400;
+  private static final int CHILD_DISCOUNT_CENTS = 300;
+  private static final int SENIOR_DISCOUNT_CENTS = 400;
+
+  private final LocalTime startMatineeTime;
+  private final LocalTime endMatineeTime;
+  private final int maxChildAge;
+  private final int minSeniorAge;
+
+  /**
+   * Configure price calculator.
+   *
+   * @param startMatineeTime time at which matinee pricing starts (non-null)
+   * @param endMatineeTime time at which matinee pricing ends (non-null)
+   * @param maxChildAge maximum age for child discount
+   * @param minSeniorAge minimum age for senior discount
+   */
+  public MovieTicketPriceCalculator(final LocalTime startMatineeTime,
+                                    final LocalTime endMatineeTime,
+                                    final int maxChildAge,
+<span class="fc" id="L36">                                    final int minSeniorAge) {</span>
+<span class="fc" id="L37">    this.startMatineeTime = Objects.requireNonNull(startMatineeTime,</span>
+        &quot;matinee start time cannot be null&quot;);
+<span class="fc" id="L39">    this.endMatineeTime = Objects.requireNonNull(endMatineeTime,</span>
+        &quot;matinee end time cannot be null&quot;);
+<span class="fc" id="L41">    this.maxChildAge = maxChildAge;</span>
+<span class="fc" id="L42">    this.minSeniorAge = minSeniorAge;</span>
+
+<span class="fc bfc" id="L44" title="All 2 branches covered.">    if (startMatineeTime.isAfter(endMatineeTime)) {</span>
+<span class="fc" id="L45">      throw new IllegalArgumentException(</span>
+          &quot;matinee start time cannot come after end time&quot;);
+    }
+<span class="fc" id="L48">  }</span>
+
+  /**
+   * Compute the price of a single ticket for a showing at the specified time
+   * and for a customer of the specified age.
+   *
+   * @param scheduledTime time of the showing
+   * @param age attendee age
+   * @return return the computed price in cents
+   */
+  public int computePrice(final LocalTime scheduledTime,
+                          final int age) {
+<span class="fc" id="L60">    final int discount = computeDiscount(age);</span>
+
+<span class="pc bpc" id="L62" title="1 of 4 branches missed.">    if ((scheduledTime.equals(startMatineeTime) || scheduledTime.isAfter(startMatineeTime))</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        &amp;&amp; scheduledTime.isBefore(endMatineeTime)) {</span>
+<span class="fc" id="L64">      return MATINEE_PRICE_CENTS - discount;</span>
+    } else {
+<span class="fc" id="L66">      return STANDARD_PRICE_CENTS - discount;</span>
+    }
+  }
+
+  public int computeDiscount(final int age) {
+<span class="fc bfc" id="L71" title="All 2 branches covered.">    if (age &gt;= minSeniorAge) {</span>
+<span class="fc" id="L72">      return SENIOR_DISCOUNT_CENTS;</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">    } else if (age &lt;= maxChildAge) {</span>
+<span class="fc" id="L74">      return CHILD_DISCOUNT_CENTS;</span>
+    } else {
+<span class="fc" id="L76">      return 0;</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
